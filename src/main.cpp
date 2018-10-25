@@ -42,6 +42,9 @@ IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
 WiFiServer server(2323);                     // create object
 
+long bgColor = GxEPD_WHITE;
+long txtColor = GxEPD_BLACK;
+
 
 void handleUpload(WiFiClient client);
 
@@ -60,21 +63,17 @@ void setup() {
     display.init();
     display.setRotation(3);
 
-    long bgColor = GxEPD_WHITE;
-    long txtColor = GxEPD_BLACK;
-
     display.fillScreen(bgColor);
     display.setTextColor(txtColor);
 
     WiFi.mode(WIFI_AP);
     WiFi.config(ip,gateway,subnet);
-    WiFi.softAP(ssid, password, 10); //initializing the AP with ssid and password. This will create a WPA2-PSK secured AP
+    WiFi.softAP(ssid, password, 10);
     drawScreen = true;
 
     Serial.println();
     Serial.print("Server IP address: ");
     Serial.println(WiFi.softAPIP());
-
     Serial.println(WiFi.softAPmacAddress());
 
     server.begin();
@@ -94,6 +93,8 @@ void loop() {
   if (drawScreen) {
     do {
 
+      display.fillScreen(bgColor);
+      display.setTextColor(txtColor);
       display.fillScreen(GxEPD_WHITE);
 
       display.setFont(&FreeSans9pt7b);
@@ -115,27 +116,65 @@ void loop() {
       display.println(WiFi.softAPmacAddress());
       display.setCursor(0, 125);
 
+      for (int i = 0; i< 255; i++) display.print((char) i);
+
       //æ = 145 Æ = 146
       // Ø = 236 ø = 235
       //Å = 143 å = 134
-    //  for (int i = 155; i<255; i++)
-    //  display.print((char)  i);
 
       drawScreen = false;
     } while (display.nextPage());
 
   }
-//  WiFiClient client = server.available();
-//  if (client) handleUpload(client);
+
 }
 
 
 void handleUpload(WiFiClient client) {
   if (client) {
     Serial.println("We have a new client");
+    int bytesRead  = 0;
+    int charsWritten  =0;
+
+    display.fillScreen(GxEPD_BLACK);
+    display.setTextColor(GxEPD_WHITE);
+    display.setFont(NULL);
+    display.setCursor(0, 10);
+
     while(client.connected()) {
        int readChar = client.read();
-       if (readChar > 0) Serial.print((char) readChar);
+       if (readChar > 0) {
+         bytesRead++;
+               charsWritten++;
+
+               if (charsWritten == 40) {
+                 display.println("");
+                 charsWritten = 0;
+                 Serial.println();
+               }
+
+               if (charsWritten == 0) {
+                 display.print("  ");
+               }
+
+               if (readChar == 173) readChar = 62;
+               if (readChar < 32) readChar = 32;
+               if (readChar == 144) readChar == 145;
+               if (readChar == 125) readChar == 235;
+
+
+
+               Serial.print("[");
+               Serial.print(readChar);
+               Serial.print("]");
+               Serial.print((char) readChar);
+
+               display.print((char) readChar);
+
+       }
     }
+    Serial.println();
+    Serial.println("Client went away");
+    display.nextPage();
   }
 }
