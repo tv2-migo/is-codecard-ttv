@@ -157,10 +157,10 @@ void handleUpload(WiFiClient client) {
                  display.print("  ");
                }
 
-               if (readChar == 173) readChar = 62;
-               if (readChar < 32) readChar = 32;
-               if (readChar == 144) readChar == 145;
-               if (readChar == 125) readChar == 235;
+               if (((int)readChar) == 173) readChar = 62;
+               if (((int)readChar) < 32) readChar = 32;
+               if (((int)readChar) == 144) readChar == 145;
+               if (((int)readChar) == 125) readChar == 235;
 
 
 
