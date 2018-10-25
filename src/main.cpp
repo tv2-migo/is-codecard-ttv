@@ -140,35 +140,33 @@ void handleUpload(WiFiClient client) {
     display.setTextColor(GxEPD_WHITE);
     display.setFont(NULL);
     display.setCursor(0, 10);
-
+    display.setTextWrap(false);
     while(client.connected()) {
+
        int readChar = client.read();
        if (readChar > 0) {
-         bytesRead++;
+               bytesRead++;
                charsWritten++;
 
                if (charsWritten == 40) {
                  display.println("");
                  charsWritten = 0;
-                 Serial.println();
+//                 Serial.println();
                }
 
-               if (charsWritten == 0) {
-                 display.print("  ");
-               }
-
-               if (((int)readChar) == 173) readChar = 62;
+               if (((int)readChar) == 173) readChar = 61;
                if (((int)readChar) < 32) readChar = 32;
-               if (((int)readChar) == 144) readChar == 145;
-               if (((int)readChar) == 125) readChar == 235;
+               if (((int)readChar) == 144) readChar = 145;
+               if (((int)readChar) == 145) readChar = 235;
+               if (((int)readChar) == 125) readChar = 134;
 
 
-
+/*
                Serial.print("[");
                Serial.print(readChar);
                Serial.print("]");
                Serial.print((char) readChar);
-
+*/
                display.print((char) readChar);
 
        }
