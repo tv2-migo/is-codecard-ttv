@@ -15,7 +15,7 @@
 #include <Fonts/FreeSansBold9pt7b.h>
 #include <Fonts/FreeSansBold12pt7b.h>
 #include <Fonts/FreeSansBold18pt7b.h>
-#include <Fonts/TomThumb.h>
+#include <Fonts/Org_01.h>
 
 GxEPD2_BW<GxEPD2_270, GxEPD2_270::HEIGHT> display(GxEPD2_270(/*CS=D8*/ 2, /*DC=D3*/ 0, /*RST=D4*/ 4, /*BUSY=D2*/ 5)); // 2.7" b/w 264x176
 
@@ -138,7 +138,8 @@ void handleUpload(WiFiClient client) {
 
     display.fillScreen(GxEPD_BLACK);
     display.setTextColor(GxEPD_WHITE);
-    display.setFont(NULL);
+    //display.setFont(&Org_01);
+    display.setFont(0);
     display.setCursor(0, 10);
     display.setTextWrap(false);
     while(client.connected()) {
@@ -146,7 +147,6 @@ void handleUpload(WiFiClient client) {
        int readChar = client.read();
        if (readChar > 0) {
                bytesRead++;
-               charsWritten++;
 
                if (charsWritten == 40) {
                  display.println("");
@@ -168,6 +168,7 @@ void handleUpload(WiFiClient client) {
                Serial.print((char) readChar);
 */
                display.print((char) readChar);
+               charsWritten++;
 
        }
     }
